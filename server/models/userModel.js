@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
     lastName: {
       type: String,
       trim: true,
-      required: [true, "User must have lasttName"],
+      required: [true, "User must have lastName"],
     },
     email: {
       type: String,

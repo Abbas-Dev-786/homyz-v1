@@ -1,5 +1,7 @@
+require("dotenv").config({ path: "./../config.env" });
 const mongoose = require("mongoose");
 const fs = require("fs");
+const Property = require("../models/propertyModel");
 
 mongoose
   .connect(
@@ -16,11 +18,14 @@ const PropertyData = JSON.parse(
   fs.readFileSync(`${__dirname}/property-data.json`, "utf-8")
 );
 
-const importData = () => {
+const importData = async () => {
   try {
-    // await
+    console.log(PropertyData);
+    await Property.create(PropertyData);
+    process.exit(0);
   } catch (error) {
-    console.log(error.message);
+    console.log(error.message + "💥");
+    process.exit(1);
   }
 };
 
