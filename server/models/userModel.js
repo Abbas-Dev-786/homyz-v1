@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const { isEmail } = require("validator");
 
 const ROLES = ["user", "admin", "agent"];
@@ -61,6 +62,15 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  this.password = await bcrypt.hash(this.password, 12);
+
+  next();
+});
+
+userSchema.methods.comparePasswords = async (enteredPassword, storedPassword) =>
+  await bcrypt.compare(enteredPassword, storedPassword);
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
