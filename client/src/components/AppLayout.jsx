@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./navbar/Index";
+import Navbar from "./navbar/Navbar";
 import Footer from "./Footer";
 import { Divider } from "@mui/material";
 

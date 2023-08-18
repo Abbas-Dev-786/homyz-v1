@@ -23,7 +23,7 @@ const pages = [
 ];
 
 const Navbar = () => {
-  const user = true;
+  const user = false;
   const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {

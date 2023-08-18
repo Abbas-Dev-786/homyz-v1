@@ -10,6 +10,7 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
+import { htmlToText } from "html-to-text";
 
 const PropertyCard = ({ img, price, title, description }) => {
   const { palette } = useTheme();
@@ -42,7 +43,7 @@ const PropertyCard = ({ img, price, title, description }) => {
             color={palette.my.main}
             noWrap
           >
-            {title}
+            {htmlToText(title)}
           </Typography>
           <Typography variant="body1" color="GrayText" noWrap>
             {description}

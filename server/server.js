@@ -9,7 +9,7 @@ mongoose
       "<password>",
       process.env.DATABASE_PASSWORD
     ),
-    { autoIndex: true }
+    {}
   )
   .then(() => console.log("DB Connected Successfull ✅"))
   .catch((err) => console.log(err.message + "❌"));

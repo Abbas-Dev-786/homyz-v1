@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const AuthBtns = () => {
   return (
@@ -9,14 +10,15 @@ const AuthBtns = () => {
       gap={2}
     >
       <Button variant="contained" size="small">
-        Login
+        <Link to="/login">Login</Link>
       </Button>
+
       <Button
         variant="outlined"
         size="small"
         sx={{ display: { xs: "none", sm: "block" } }}
       >
-        Register
+        <Link to="/register"> Register</Link>
       </Button>
     </Box>
   );

@@ -1,9 +1,20 @@
+const { query } = require("express");
+const ApiFeature = require("../utils/ApiFeature");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 module.exports.getAllDocs = (Model) =>
   catchAsync(async (req, res, next) => {
-    const docs = await Model.find({});
+    const features = new ApiFeature(Model.find(), req.query, Model)
+      .filter()
+      .sort()
+      .limitFields();
+    // .paginate();
+
+    const docs = await Model.paginate(features.query, {
+      page: req.query.page || 1,
+      limit: req.query.limit || 40,
+    });
 
     res
       .status(200)

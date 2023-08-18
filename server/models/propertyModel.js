@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const propertySchema = new mongoose.Schema(
   {
@@ -67,6 +68,7 @@ const propertySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+propertySchema.plugin(mongoosePaginate);
 propertySchema.index({ price: 1, title: 1, city: 1 });
 propertySchema.index({ location: "2dsphere" });
 

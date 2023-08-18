@@ -6,10 +6,12 @@ import {
   InputAdornment,
 } from "@mui/material";
 import PlaceIcon from "@mui/icons-material/Place";
-
-const data = ["indore", "ujjain"];
+import { useQuery } from "react-query";
+import { getCities } from "../api";
 
 function Searchbar() {
+  const { data } = useQuery(["cities"], getCities);
+
   const handleSearch = (e) => {
     e.preventDefault();
   };
@@ -30,15 +32,17 @@ function Searchbar() {
       onSubmit={handleSearch}
     >
       <Autocomplete
-        disablePortal
+        disablePortal={true}
         id="search-bar"
-        options={data}
+        options={data || []}
         freeSolo
         sx={{
           background: "transparent",
         }}
         fullWidth
         size="small"
+        autoHighlight={true}
+        getOptionLabel={(options) => options._id}
         renderInput={(params) => (
           <TextField
             label="Search for places"
@@ -51,10 +55,10 @@ function Searchbar() {
               ),
             }}
             {...params}
-            // sx={{ borderColor: "transparent", outline: "none" }}
           />
         )}
       />
+
       <Button variant="contained" size="small" type="submit">
         Search
       </Button>

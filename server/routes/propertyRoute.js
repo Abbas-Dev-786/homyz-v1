@@ -3,6 +3,13 @@ const propertyController = require("./../controllers/propertyController");
 
 const router = express.Router();
 
+router.get("/cities", propertyController.getAllCities);
+router.get(
+  "/top10properties",
+  propertyController.getTop10,
+  propertyController.getAllProperties
+);
+
 router
   .route("/")
   .get(propertyController.getAllProperties)
