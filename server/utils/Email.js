@@ -10,7 +10,7 @@ class Email {
   }
 
   newTransport() {
-    return nodemailer.createTransport({
+    const dev = nodemailer.createTransport({
       host: "sandbox.smtp.mailtrap.io",
       port: 2525,
       auth: {
@@ -18,6 +18,16 @@ class Email {
         pass: process.env.NODEMAILER_PASSWORD,
       },
     });
+
+    const prod = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_FROM,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    return process.env.NODE_ENV === "prod" ? prod : dev;
   }
 
   async send(subject, text, html = "") {
@@ -32,6 +42,7 @@ class Email {
 
       await this.newTransport().sendMail(mailOptions);
     } catch (err) {
+      console.log(err);
       const error = new Error(
         "There was an error sending the email. Try again later!"
       );

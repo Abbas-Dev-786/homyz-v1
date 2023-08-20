@@ -1,14 +1,47 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useMutation } from "react-query";
 import { Typography } from "@mui/material";
 import { AuthBtn } from "./AuthComponents";
 import AuthInput from "./AuthInput";
+import { useNavigate, useParams } from "react-router-dom";
+import { resetPassword } from "../../api";
 
 const ResetPasswordForm = () => {
+  const { token } = useParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setconfirmPassword] = useState("");
 
+  const navigate = useNavigate();
+  const { mutate, isLoading } = useMutation(resetPassword, {
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: () => {
+      toast.success("Password Reset Succesfull. Please Login");
+
+      navigate("/login");
+    },
+  });
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    if (!password || !confirmPassword) {
+      toast.error("Both fields are mandatory.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Password not matching.");
+      return;
+    }
+
+    mutate({ password, confirmPassword, token });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleFormSubmit}>
       <Typography variant="h4" textAlign="center" fontWeight={700}>
         Reset Password
       </Typography>
@@ -40,6 +73,7 @@ const ResetPasswordForm = () => {
       <AuthBtn
         type="submit"
         variant="contained"
+        disabled={isLoading}
         size="large"
         sx={{ mt: 2 }}
         fullWidth

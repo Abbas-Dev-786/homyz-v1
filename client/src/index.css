@@ -106,8 +106,9 @@ body {
 }
 
 .carousel-image {
-  height: 60vh;
-  object-fit: cover;
+  height: 65vh;
+  object-fit: contain;
+  aspect-ratio: 16/9;
   border-radius: 30px;
 }
 

@@ -1,26 +1,35 @@
 import { Container, Grid } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 import Carousel from "../components/Carousel";
 import PropertyDetail from "../components/PropertyDetail";
 import MapBox from "../components/MapBox";
-
-const location = {
-  address: "1600 Amphitheatre Parkway, Mountain View, california.",
-  coords: {
-    lat: 37.42216,
-    lng: -122.08427,
-  },
-};
+import { getProperty } from "../api";
+import PageLoader from "../components/PageLoader";
 
 const Property = () => {
+  const { id } = useParams();
+  const { data, isLoading, error } = useQuery(["property", id], getProperty);
+
+  console.log(data);
+
+  if (error) return <PageLoader error={error} />;
+
+  if (isLoading) return <PageLoader />;
+
   return (
     <Container maxWidth="xl" sx={{ mt: 5 }} disableGutters>
-      <Carousel />
+      <Carousel images={data.images} />
       <Grid container my={3} spacing={5}>
         <Grid item xs={12} md={6}>
-          <PropertyDetail />
+          <PropertyDetail {...data} />
         </Grid>
         <Grid item xs={12} md={6}>
-          <MapBox location={location} zoomLevel={13} />
+          <MapBox
+            location={data.location}
+            address={data.address}
+            zoomLevel={13}
+          />
         </Grid>
       </Grid>
     </Container>

@@ -8,12 +8,19 @@ import {
 import PlaceIcon from "@mui/icons-material/Place";
 import { useQuery } from "react-query";
 import { getCities } from "../api";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Searchbar() {
+  const [city, setCity] = useState("");
+  const navigate = useNavigate();
+
   const { data } = useQuery(["cities"], getCities);
 
   const handleSearch = (e) => {
     e.preventDefault();
+
+    city && navigate(`/properties/city/${city}`);
   };
 
   return (
@@ -35,14 +42,18 @@ function Searchbar() {
         disablePortal={true}
         id="search-bar"
         options={data || []}
+        autoHighlight={true}
+        size="small"
         freeSolo
+        fullWidth
+        inputValue={city}
+        getOptionLabel={(option) => option._id ?? option}
         sx={{
           background: "transparent",
         }}
-        fullWidth
-        size="small"
-        autoHighlight={true}
-        getOptionLabel={(options) => options._id}
+        onInputChange={(_, newCity) => {
+          setCity(newCity);
+        }}
         renderInput={(params) => (
           <TextField
             label="Search for places"

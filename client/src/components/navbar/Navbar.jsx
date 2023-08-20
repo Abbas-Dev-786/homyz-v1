@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -15,6 +15,7 @@ import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 import UserMenu from "./UserMenu";
 import AuthBtns from "./AuthBtns";
+import useAuth from "../../hooks/useAuth";
 
 const pages = [
   { label: "Home", link: "/" },
@@ -23,7 +24,8 @@ const pages = [
 ];
 
 const Navbar = () => {
-  const user = false;
+  const { user } = useAuth();
+
   const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {

@@ -12,11 +12,13 @@ import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
 import { htmlToText } from "html-to-text";
 
-const PropertyCard = ({ img, price, title, description }) => {
+const PropertyCard = ({ img, price, title, description, city, _id }) => {
   const { palette } = useTheme();
 
+  const sanitizedDescription = htmlToText(description);
+
   return (
-    <Link to="/properties/374837874">
+    <Link to={`/properties/city/${city}/property/${_id}`}>
       <Card sx={{ mt: 1, mb: 5, mx: 1, boxShadow: "none", cursor: "pointer" }}>
         <div className="card-top">
           <img src={img} width="100%" alt={title} />
@@ -46,7 +48,7 @@ const PropertyCard = ({ img, price, title, description }) => {
             {htmlToText(title)}
           </Typography>
           <Typography variant="body1" color="GrayText" noWrap>
-            {description}
+            {sanitizedDescription}
           </Typography>
         </CardContent>
       </Card>
@@ -56,6 +58,8 @@ const PropertyCard = ({ img, price, title, description }) => {
 
 PropertyCard.propTypes = {
   img: PropTypes.string,
+  city: PropTypes.string,
+  _id: PropTypes.string,
   price: PropTypes.number,
   title: PropTypes.string,
   description: PropTypes.string,

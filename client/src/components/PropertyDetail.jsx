@@ -1,21 +1,37 @@
+import PropTypes from "prop-types";
 import { Typography, Box, Button, useTheme } from "@mui/material";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import PlaceIcon from "@mui/icons-material/Place";
 import FlexBetween from "./FlexBetween";
+import { htmlToText } from "html-to-text";
+import useAuth from "../hooks/useAuth";
 
-const PropertyDetail = () => {
+const PropertyDetail = ({
+  title,
+  price,
+  noOfBathrooms,
+  noOfBedrooms,
+  description,
+  city,
+}) => {
+  const { user } = useAuth();
   const { palette } = useTheme();
+
+  const sanitizedDescription = htmlToText(description);
+
+  const handleView = () => {};
+  const handleBid = () => {};
 
   return (
     <Box p={1}>
       <FlexBetween>
         <Typography variant="h5" fontWeight={700} color={palette.my.main}>
-          Properrty Name
+          {title}
         </Typography>
         <Typography variant="h5" fontWeight={600} color={palette.my.sub}>
-          $5000
+          ${price}
         </Typography>
       </FlexBetween>
 
@@ -30,7 +46,7 @@ const PropertyDetail = () => {
         >
           <BathtubIcon color="info" />
           <Typography variant="body2" fontWeight={500}>
-            2 Bathrooms
+            {noOfBathrooms} Bathrooms
           </Typography>
         </Box>
         <Box
@@ -53,40 +69,55 @@ const PropertyDetail = () => {
           }}
         >
           <MeetingRoomIcon color="info" />
-          <Typography variant="body2">2 Rooms</Typography>
+          <Typography variant="body2">{noOfBedrooms} Rooms</Typography>
         </Box>
       </Box>
 
       <Typography variant="body1" color="GrayText" gutterBottom>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut aliquam
-        ratione aliquid rem iusto, suscipit laborum sequi aut cum ab, facilis
-        sunt, odit nihil sint eaque commodi laudantium dolor voluptates neque
-        totam. Repellendus quis, voluptate temporibus a corporis qui soluta
-        necessitatibus, obcaecati culpa veniam placeat neque. Totam, sed? Dicta,
-        unde ut cum ex ipsam, eius vitae accusamus minima fugiat explicabo,
-        ipsum corrupti doloribus officia facere facilis enim! Sed unde
-        consequatur mollitia itaque ratione sit voluptates, nobis dolore
-        perferendis, aspernatur tempora iusto earum! Non officia eum facilis
-        consequuntur, temporibus doloremque, maiores libero vero sint tempora
-        assumenda, quam doloribus nobis rerum quaerat?
+        {sanitizedDescription}
       </Typography>
 
       <Typography display="flex" alignItems="flex-end" gap={1} my={3}>
         <PlaceIcon />
-        Indore
+        {city}
       </Typography>
 
       <Box display="flex" alignItems="center" gap={5}>
-        <Button variant="contained" color="warning">
+        <Button
+          variant="contained"
+          color="warning"
+          disabled={!user}
+          onClick={handleView}
+        >
           Book Your Visit
         </Button>
 
-        <Button variant="outlined" color="warning">
+        <Button
+          variant="outlined"
+          color="warning"
+          disabled={!user}
+          onClick={handleBid}
+        >
           Bid On this project
         </Button>
       </Box>
+
+      {!user && (
+        <Typography mt={2} color="red" variant="caption">
+          Please Login to access this feature
+        </Typography>
+      )}
     </Box>
   );
+};
+
+PropertyDetail.propTypes = {
+  title: PropTypes.string,
+  price: PropTypes.number,
+  noOfBathrooms: PropTypes.number,
+  noOfBedrooms: PropTypes.number,
+  description: PropTypes.string,
+  city: PropTypes.string,
 };
 
 export default PropertyDetail;

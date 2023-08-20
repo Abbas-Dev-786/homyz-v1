@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useMutation } from "react-query";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { AuthBtn } from "./AuthComponents";
 import AuthInput from "./AuthInput";
 import GoogleBtn from "./GoogleBtn";
+import { registerUser } from "../../api";
 
 const RegisterForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -11,10 +14,24 @@ const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { mutate, isLoading } = useMutation(registerUser, {
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: () => {
+      toast.success("User registered Successfully. Please Login");
+    },
+  });
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    console.table({ firstName, lastName, email, password });
+    if (!(firstName && lastName && email && password)) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    mutate({ firstName, lastName, email, password });
   };
 
   return (
@@ -74,6 +91,7 @@ const RegisterForm = () => {
         type="submit"
         variant="contained"
         size="large"
+        disabled={isLoading}
         sx={{ mt: 2 }}
         fullWidth
       >

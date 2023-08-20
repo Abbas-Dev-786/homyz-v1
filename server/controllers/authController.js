@@ -19,7 +19,9 @@ const signToken = (id, authType) =>
 const createURL = async (user, key, req, routeName) => {
   // returns a url address for emails
   const token = await user.createHashToken(key);
-  const URL = `${req.protocol}://${req.hostname}:8000/api/v1/auth/${routeName}/${token}`;
+  const CLIENT_URL = `http://localhost:5173/${routeName}`;
+  const URL = `${CLIENT_URL}/${token}`;
+  // const URL = `${req.protocol}://${req.hostname}:8000/api/v1/auth/${routeName}/${token}`;
 
   return URL;
 };
@@ -295,3 +297,7 @@ module.exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+// module.exports.test = catchAsync((req, res, next) => {
+//   createAndSendToken(res, req.user);
+// });

@@ -1,13 +1,14 @@
 import { Swiper, SwiperSlide } from "swiper/react";
+import PropTypes from "prop-types";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const images = ["banner.jpg", "contact.jpg", "value.jpg"];
+// const images = ["banner.jpg", "contact.jpg", "value.jpg"];
 
-const Carousel = () => {
+const Carousel = ({ images }) => {
   return (
     <Swiper
       pagination={{ clickable: true }}
@@ -24,7 +25,7 @@ const Carousel = () => {
       {images.map((image, i) => (
         <SwiperSlide key={i}>
           <img
-            src={`../../public/images/${image}`}
+            src={image}
             alt="property-img"
             width="100%"
             className="carousel-image"
@@ -33,6 +34,10 @@ const Carousel = () => {
       ))}
     </Swiper>
   );
+};
+
+Carousel.propTypes = {
+  images: PropTypes.array,
 };
 
 export default Carousel;

@@ -8,10 +8,11 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import useAuth from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 
 const UserMenu = () => {
+  const { removeUser } = useAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -20,6 +21,14 @@ const UserMenu = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const logoutHandler = () => {
+    const result = removeUser();
+
+    result
+      ? toast.success("Logout Successfull")
+      : toast.error("user does not exists");
   };
 
   return (
@@ -46,11 +55,20 @@ const UserMenu = () => {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {settings.map((setting) => (
-          <MenuItem key={setting} onClick={handleCloseUserMenu}>
+        {/* {settings.map((setting) => (
+          <MenuItem key={setting}>
             <Typography textAlign="center">{setting}</Typography>
           </MenuItem>
-        ))}
+        ))} */}
+        <MenuItem>
+          <Typography textAlign="center">Profile</Typography>
+        </MenuItem>
+        <MenuItem>
+          <Typography textAlign="center">Dashboard</Typography>
+        </MenuItem>
+        <MenuItem onClick={logoutHandler}>
+          <Typography textAlign="center">Logout</Typography>
+        </MenuItem>
       </Menu>
     </Box>
   );

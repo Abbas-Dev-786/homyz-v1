@@ -12,47 +12,58 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Searchbar from "../components/Searchbar";
 import PropertyCard from "../components/PropertyCard";
 import { getProperties } from "../api";
+import { useParams } from "react-router-dom";
+import PageLoader from "../components/PageLoader";
+
+const genNextPage = (lastPage, allPages) => {
+  const nextPage = lastPage.data.hasNextPage ? allPages.length + 1 : undefined;
+
+  return nextPage;
+};
+
+const selectDataFields = (obj) => {
+  const data = obj.pages.flatMap((el) => el.data.docs);
+  const totalDocs = obj.pages[0].data.totalDocs;
+
+  return { data, totalDocs };
+};
 
 const Properties = () => {
-  const { data, fetchNextPage } = useInfiniteQuery(
-    ["properties"],
-    ({ pageParam = 1 }) => getProperties(pageParam),
+  const { city } = useParams();
+
+  const { data, isLoading, error, fetchNextPage } = useInfiniteQuery(
+    ["properties", city],
+    ({ pageParam = 1 }) => getProperties({ page: pageParam, city }),
     {
-      getNextPageParam: (lastPage, allPages) => {
-        const nextPage = lastPage.data.hasNextPage
-          ? allPages.length + 1
-          : undefined;
-
-        return nextPage;
-      },
-      select: (obj) => {
-        const data = obj.pages.flatMap((el) => el.data.docs);
-        const totalDocs = obj.pages[0].data.totalDocs;
-
-        return { data, totalDocs };
-      },
+      getNextPageParam: genNextPage,
+      select: selectDataFields,
     }
   );
 
   const propertiesData = useMemo(() => data?.data, [data]);
 
-  if (!data || !propertiesData?.length)
-    return (
-      <Box
-        height="75vh"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <CircularProgress color="warning" size={70} />
-      </Box>
-    );
+  if (error) return <PageLoader error={error} />;
+
+  if (isLoading) return <PageLoader />;
 
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center">
         <Searchbar />
       </Box>
+
+      <Typography
+        variant="body1"
+        textTransform="capitalize"
+        fontWeight={700}
+        textAlign="center"
+        mt={5}
+        color="orange"
+      >
+        {city
+          ? `In ${city} we have ${data.totalDocs} properties`
+          : `we have total ${data.totalDocs} properties on our portal`}
+      </Typography>
       <InfiniteScroll
         dataLength={propertiesData.length}
         next={fetchNextPage}
@@ -65,7 +76,9 @@ const Properties = () => {
         }
         endMessage={
           <Typography variant="body1" color="orange" textAlign="center" mb={5}>
-            <b>Yay! You have seen it all</b>
+            {propertiesData.length
+              ? "Yay! You have seen it all"
+              : ` No Property exists in ${city}`}
           </Typography>
         }
       >
