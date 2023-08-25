@@ -7,6 +7,8 @@ import PlaceIcon from "@mui/icons-material/Place";
 import FlexBetween from "./FlexBetween";
 import { htmlToText } from "html-to-text";
 import useAuth from "../hooks/useAuth";
+import { useState } from "react";
+import DateModel from "./DateModel";
 
 const PropertyDetail = ({
   title,
@@ -18,10 +20,13 @@ const PropertyDetail = ({
 }) => {
   const { user } = useAuth();
   const { palette } = useTheme();
+  const [isDateModelOpen, setDateModel] = useState(false);
 
   const sanitizedDescription = htmlToText(description);
 
-  const handleView = () => {};
+  const handleView = () => {
+    setDateModel(true);
+  };
   const handleBid = () => {};
 
   return (
@@ -91,6 +96,7 @@ const PropertyDetail = ({
         >
           Book Your Visit
         </Button>
+        <DateModel open={isDateModelOpen} set={setDateModel} />
 
         <Button
           variant="outlined"

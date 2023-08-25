@@ -1,4 +1,3 @@
-const { query } = require("express");
 const ApiFeature = require("../utils/ApiFeature");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");

@@ -7,7 +7,7 @@ axios.defaults.baseURL = import.meta.env.DEV
   ? "http://127.0.0.1:8000/api/v1"
   : "";
 
-axios.defaults.headers.common["Authorization"] = token;
+axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 export const getProperties = async ({ page, city }) => {
   try {
@@ -97,6 +97,15 @@ export const resetPassword = async ({ password, confirmPassword, token }) => {
       password,
       confirmPassword,
     });
+  } catch (err) {
+    const message = err?.response?.data?.message || DEFAULT_ERROR_MESSAGE;
+    throw Error(message);
+  }
+};
+
+export const createView = async ({ id, startTime }) => {
+  try {
+    await axios.post(`/properties/${id}/views`, { startTime });
   } catch (err) {
     const message = err?.response?.data?.message || DEFAULT_ERROR_MESSAGE;
     throw Error(message);

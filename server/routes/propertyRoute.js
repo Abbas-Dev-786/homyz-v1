@@ -1,7 +1,10 @@
 const express = require("express");
 const propertyController = require("./../controllers/propertyController");
+const viewRouter = require("./viewRoute");
 
 const router = express.Router();
+
+router.use("/:propertyId/views", viewRouter);
 
 router.get("/cities", propertyController.getAllCities);
 router.get(

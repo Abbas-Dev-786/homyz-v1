@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const bcrypt = require("bcryptjs");
 const { isEmail } = require("validator");
 const crypto = require("crypto");
@@ -66,6 +67,14 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.plugin(mongoosePaginate);
+
+userSchema.virtual("views", {
+  ref: "View",
+  foreignField: "user",
+  localField: "_id",
+});
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

@@ -11,8 +11,6 @@ const Property = () => {
   const { id } = useParams();
   const { data, isLoading, error } = useQuery(["property", id], getProperty);
 
-  console.log(data);
-
   if (error) return <PageLoader error={error} />;
 
   if (isLoading) return <PageLoader />;
