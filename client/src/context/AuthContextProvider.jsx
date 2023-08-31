@@ -11,6 +11,15 @@ const AuthContextProvider = ({ children }) => {
     setUser(data);
   };
 
+  const updateUserStorage = (newData) => {
+    const data = { ...user };
+
+    data.user = newData;
+
+    localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
+  };
+
   const removeUser = () => {
     if (user) {
       localStorage.removeItem("user");
@@ -22,7 +31,9 @@ const AuthContextProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUserStorage, removeUser }}>
+    <AuthContext.Provider
+      value={{ user, setUserStorage, removeUser, updateUserStorage }}
+    >
       {children}
     </AuthContext.Provider>
   );

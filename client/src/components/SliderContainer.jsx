@@ -1,11 +1,12 @@
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Navigation } from "swiper/modules";
 import SectionText from "./SectionText";
 import PropertyCard from "./PropertyCard";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { useQuery } from "react-query";
 import { getTop10Properties } from "../api";
 
@@ -58,7 +59,8 @@ const SliderContainer = () => {
                 spaceBetween: 40,
               },
             }}
-            modules={[Pagination]}
+            navigation={true}
+            modules={[Navigation, Pagination]}
           >
             {data?.map((d, i) => (
               <SwiperSlide key={i}>

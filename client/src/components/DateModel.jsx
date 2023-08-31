@@ -17,6 +17,7 @@ const DateModel = ({ open, set }) => {
 
   const { mutate } = useMutation(createView, {
     onError: (err) => {
+      // console.log(err);
       toast.error(err.message);
     },
     onSuccess: () => {

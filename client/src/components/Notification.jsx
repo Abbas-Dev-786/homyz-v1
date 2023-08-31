@@ -5,7 +5,7 @@ const Notification = () => {
   return (
     <ToastContainer
       position="top-right"
-      autoClose={4000}
+      autoClose={1000}
       hideProgressBar={false}
       newestOnTop={true}
       closeOnClick

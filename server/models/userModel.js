@@ -49,7 +49,6 @@ const userSchema = new mongoose.Schema(
     },
     authType: {
       type: String,
-      select: false,
       default: "jwt",
     },
     isActive: {
@@ -65,7 +64,12 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    virtuals: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 userSchema.plugin(mongoosePaginate);
@@ -80,6 +84,12 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
+
+  next();
+});
+
+userSchema.pre("findOne", async function (next) {
+  this.populate("views");
 
   next();
 });

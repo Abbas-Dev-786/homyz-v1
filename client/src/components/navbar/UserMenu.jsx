@@ -10,10 +10,12 @@ import {
 } from "@mui/material";
 import useAuth from "../../hooks/useAuth";
 import { toast } from "react-toastify";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const UserMenu = () => {
-  const { removeUser } = useAuth();
+  const { removeUser, user } = useAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -25,6 +27,8 @@ const UserMenu = () => {
 
   const logoutHandler = () => {
     const result = removeUser();
+
+    navigate("/");
 
     result
       ? toast.success("Logout Successfull")
@@ -55,17 +59,18 @@ const UserMenu = () => {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {/* {settings.map((setting) => (
-          <MenuItem key={setting}>
-            <Typography textAlign="center">{setting}</Typography>
+        <NavLink to="/user/profile">
+          <MenuItem>
+            <Typography textAlign="center">Profile</Typography>
           </MenuItem>
-        ))} */}
-        <MenuItem>
-          <Typography textAlign="center">Profile</Typography>
-        </MenuItem>
-        <MenuItem>
-          <Typography textAlign="center">Dashboard</Typography>
-        </MenuItem>
+        </NavLink>
+        {user.isSeller && (
+          <NavLink to="/user/dashboard">
+            <MenuItem>
+              <Typography textAlign="center">Dashboard</Typography>
+            </MenuItem>
+          </NavLink>
+        )}
         <MenuItem onClick={logoutHandler}>
           <Typography textAlign="center">Logout</Typography>
         </MenuItem>

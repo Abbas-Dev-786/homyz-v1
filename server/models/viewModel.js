@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const moment = require("moment");
 
 const viewSchema = new mongoose.Schema(
@@ -25,13 +26,25 @@ const viewSchema = new mongoose.Schema(
       type: Date,
     },
   },
-  { virtuals: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    timestamps: true,
+    virtuals: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+viewSchema.plugin(mongoosePaginate);
 
 viewSchema.pre("save", function (next) {
   this.endTime = moment(this.startTime).add(30, "m").toDate();
 
-  this.day = new Date(this.startTime).toDateString();
+  next();
+});
+
+viewSchema.pre(/^find/, function (next) {
+  this.populate({ path: "property", select: "title address city country" });
+
   next();
 });
 

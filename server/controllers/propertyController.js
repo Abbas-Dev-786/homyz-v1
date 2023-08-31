@@ -32,3 +32,12 @@ module.exports.getTop10 = (req, res, next) => {
 
   next();
 };
+
+module.exports.setCoordinates = (req, res, next) => {
+  req.body.location = {
+    type: "Point",
+    coordinates: req.body.location,
+  };
+
+  next();
+};

@@ -14,6 +14,7 @@ import PropertyCard from "../components/PropertyCard";
 import { getProperties } from "../api";
 import { useParams } from "react-router-dom";
 import PageLoader from "../components/PageLoader";
+// import useBookmark from "../hooks/useBookmark";
 
 const genNextPage = (lastPage, allPages) => {
   const nextPage = lastPage.data.hasNextPage ? allPages.length + 1 : undefined;
@@ -30,6 +31,7 @@ const selectDataFields = (obj) => {
 
 const Properties = () => {
   const { city } = useParams();
+  // const { bookmarks } = useBookmark();
 
   const { data, isLoading, error, fetchNextPage } = useInfiniteQuery(
     ["properties", city],

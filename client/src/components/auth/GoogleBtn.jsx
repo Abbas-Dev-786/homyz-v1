@@ -1,21 +1,45 @@
 import PropTypes from "prop-types";
 import GoogleIcon from "@mui/icons-material/Google";
+import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 import { AuthBtn } from "./AuthComponents";
+import useAuth from "../../hooks/useAuth";
+import { googleAuth } from "../../api";
 
 const GoogleBtn = ({ text }) => {
-  const handleGoogleLogin = (e) => {
-    e.preventDefault();
+  const { setUserStorage } = useAuth();
 
-    window.open("http://127.0.0.1:8000/api/v1/auth/google", "_self");
-  };
+  const navigate = useNavigate();
+
+  const { mutate, isLoading } = useMutation(googleAuth, {
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSuccess: (data) => {
+      setUserStorage(data);
+
+      toast.success("Login Successfull");
+
+      navigate("/");
+    },
+  });
+
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => mutate(tokenResponse.code),
+    onError: (errorResponse) => toast.error(errorResponse),
+    flow: "auth-code",
+  });
 
   return (
     <AuthBtn
       variant="contained"
+      disabled={isLoading}
       startIcon={<GoogleIcon />}
-      sx={{ background: "#626167" }}
+      sx={{ background: "#f7f7f7" }}
       fullWidth
-      onClick={handleGoogleLogin}
+      onClick={() => login()}
     >
       {text} With Google
     </AuthBtn>

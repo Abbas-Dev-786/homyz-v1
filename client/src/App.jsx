@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes } from "react-router-dom";
@@ -15,6 +16,11 @@ import theme from "./theme";
 import Contact from "./pages/Contact";
 import Notification from "./components/Notification";
 import AuthContextProvider from "./context/AuthContextProvider";
+import UserProfile from "./pages/UserProfile";
+import ProfileLayout from "./components/profile/ProfileLayout";
+import UserVists from "./pages/UserVists";
+import ChangePassword from "./pages/ChangePassword";
+import PageLoader from "./components/PageLoader";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 0 } },
@@ -26,26 +32,35 @@ const App = () => {
       <AuthContextProvider>
         <QueryClientProvider client={queryClient}>
           <Notification />
-          <Routes>
-            <Route path="/" element={<AppLayout />}>
-              <Route index element={<Home />} />
-              <Route path="properties" element={<Properties />} />
-              <Route path="properties/city/:city" element={<Properties />} />
-              <Route
-                path="properties/city/:city/property/:id"
-                element={<Property />}
-              />
-              <Route path="contact" element={<Contact />} />
-            </Route>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<AppLayout />}>
+                <Route index element={<Home />} />
+                <Route path="properties" element={<Properties />} />
+                <Route path="properties/city/:city" element={<Properties />} />
+                <Route
+                  path="properties/city/:city/property/:id"
+                  element={<Property />}
+                />
+                <Route path="contact" element={<Contact />} />
+              </Route>
 
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgotPassword" element={<ForgotPassword />} />
-            <Route path="/resetPassword/:token" element={<ResetPassword />} />
-            <Route path="/verifyEmail/:token" element={<VerifyEmail />} />
+              <Route path="/user" element={<ProfileLayout />}>
+                <Route path="profile" element={<UserProfile />} />
+                <Route path="favorites" element={<UserProfile />} />
+                <Route path="visits" element={<UserVists />} />
+                <Route path="changePassword" element={<ChangePassword />} />
+              </Route>
 
-            <Route path="*" element={<h1>404 page</h1>} />
-          </Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgotPassword" element={<ForgotPassword />} />
+              <Route path="/resetPassword/:token" element={<ResetPassword />} />
+              <Route path="/verifyEmail/:token" element={<VerifyEmail />} />
+
+              <Route path="*" element={<h1>404 page</h1>} />
+            </Routes>
+          </Suspense>
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>

@@ -2,11 +2,20 @@
 const crypto = require("crypto");
 // import 3rd party modules
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const { OAuth2Client } = require("google-auth-library");
 // import custome modules
 const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const Email = require("../utils/Email");
+
+// ========= oAuth setup ============
+const oAuth2Client = new OAuth2Client(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "postmessage"
+);
 
 // ============== HELPER function =============
 const signToken = (id, authType) =>
@@ -19,7 +28,10 @@ const signToken = (id, authType) =>
 const createURL = async (user, key, req, routeName) => {
   // returns a url address for emails
   const token = await user.createHashToken(key);
-  const CLIENT_URL = `http://localhost:5173/${routeName}`;
+  const CLIENT_URL =
+    process.env.NODE_ENV === "dev"
+      ? `http://localhost:5173/${routeName}`
+      : `https://homyz-amb.netlify.app/${routeName}`;
   const URL = `${CLIENT_URL}/${token}`;
   // const URL = `${req.protocol}://${req.hostname}:8000/api/v1/auth/${routeName}/${token}`;
 
@@ -38,12 +50,58 @@ const createAndSendToken = (res, user) => {
   const token = signToken(user._id, user.authType);
 
   user.password = undefined;
-  user.authType = undefined;
   user.isActive = undefined;
   user.updatedAt = undefined;
 
   res.status(200).json({ status: "success", data: { user, token } });
 };
+
+// ========= GOOGLE AUTH handler ============
+module.exports.googleLogin = catchAsync(async (req, res, next) => {
+  const { tokens } = await oAuth2Client.getToken(req.body.code);
+
+  const { data } = await axios.get(
+    "https://www.googleapis.com/oauth2/v3/userinfo",
+    {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+    }
+  );
+
+  const {
+    email,
+    given_name: firstName,
+    family_name: lastName,
+    email_verified: isVerified,
+  } = data;
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      firstName,
+      lastName,
+      email,
+      isVerified,
+      password: "test1234",
+      authType: "google",
+    });
+  }
+
+  if (user.authType === "jwt") {
+    return next(
+      new AppError(
+        "Login with email and password. Google login is not implemented on this account.",
+        400
+      )
+    );
+  }
+
+  if (!user.isActive) {
+    return next(new AppError("user does not exists", 404));
+  }
+
+  createAndSendToken(res, user);
+});
 
 // ============== REGISTER handler =============
 module.exports.register = catchAsync(async (req, res, next) => {
@@ -52,7 +110,6 @@ module.exports.register = catchAsync(async (req, res, next) => {
 
   // sanitize fields
   user.password = undefined;
-  user.authType = undefined;
   user.isActive = undefined;
   user.updatedAt = undefined;
 
@@ -81,6 +138,11 @@ module.exports.login = catchAsync(async (req, res, next) => {
     return next(
       new AppError("Invalid credentials. Please check email or password", 400)
     );
+  }
+
+  // check for google login
+  if (user.authType === "google") {
+    return next(new AppError("Please Login with google.", 400));
   }
 
   // check user is deleted
@@ -297,7 +359,3 @@ module.exports.restrictTo = (...roles) => {
     next();
   };
 };
-
-// module.exports.test = catchAsync((req, res, next) => {
-//   createAndSendToken(res, req.user);
-// });

@@ -1,5 +1,6 @@
 const express = require("express");
 const propertyController = require("./../controllers/propertyController");
+const authController = require("./../controllers/authController");
 const viewRouter = require("./viewRoute");
 
 const router = express.Router();
@@ -16,19 +17,25 @@ router.get(
 router
   .route("/")
   .get(propertyController.getAllProperties)
-  .post((req, res, next) => {
-    req.body.location = {
-      type: "Point",
-      coordinates: req.body.location,
-    };
-
-    next();
-  }, propertyController.createProperty);
+  .post(
+    authController.protect,
+    authController.restrictTo("admin", "agent"),
+    propertyController.setCoordinates,
+    propertyController.createProperty
+  );
 
 router
   .route("/:id")
   .get(propertyController.getProperty)
-  .patch(propertyController.updateProperty)
-  .delete(propertyController.deleteProperty);
+  .patch(
+    authController.protect,
+    authController.restrictTo("admin", "agent"),
+    propertyController.updateProperty
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo("admin", "agent"),
+    propertyController.deleteProperty
+  );
 
 module.exports = router;
