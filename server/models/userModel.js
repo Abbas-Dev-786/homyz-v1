@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema(
       maxLength: [20, "Password should not exceed 20 characters."],
       required: [true, "User must have Password"],
     },
+    passwordChangedAt: { type: Date },
     passwordResetToken: { type: String },
     passwordResetExpires: { type: Date },
     role: {
@@ -88,6 +89,13 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.pre("findOne", async function (next) {
   this.populate("views");
 
@@ -108,6 +116,20 @@ userSchema.methods.createHashToken = async function (key) {
   await this.save({ validateBeforeSave: false });
 
   return resetToken;
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // False means NOT changed
+  return false;
 };
 
 const User = mongoose.model("User", userSchema);

@@ -11,8 +11,6 @@ const ProfileLayout = () => {
   } = useAuth();
   const location = useLocation();
 
-  console.log(location);
-
   if (
     !user ||
     (location.pathname === "/user/changePassword" && user.authType === "google")
