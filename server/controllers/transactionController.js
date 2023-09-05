@@ -1,6 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const User = require("../models/userModel");
-const Transaction = require("../models/TransactionModel");
+const Transaction = require("../models/transactionModel");
 const Property = require("../models/propertyModel");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./FactoryHandler");

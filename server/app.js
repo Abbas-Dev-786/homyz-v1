@@ -20,7 +20,7 @@ const app = express();
 app.enable("trust proxy");
 
 // Implement CORS
-const whitelist = ["http://localhost:5173", "https://homyz-amb.netlify.app/"];
+const whitelist = ["http://localhost:5173", "https://homyz-amb.netlify.app"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1) {
@@ -31,7 +31,7 @@ const corsOptions = {
   },
 };
 app.use(cors(corsOptions));
-//app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // Set security HTTP headers
 app.use(helmet());
