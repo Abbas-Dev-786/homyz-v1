@@ -11,6 +11,7 @@ const authRouter = require("./routes/authRoute");
 const userRouter = require("./routes/userRoute");
 const propertyRouter = require("./routes/propertyRoute");
 const viewRouter = require("./routes/viewRoute");
+const transactionRouter = require("./routes/transactionRoute");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
@@ -65,6 +66,7 @@ app.use(`${BASE_URL}/auth`, authRouter);
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/properties`, propertyRouter);
 app.use(`${BASE_URL}/views`, viewRouter);
+app.use(`${BASE_URL}/transactions`, transactionRouter);
 
 app.all("*", (req, _, next) => {
   next(new AppError(`The route ${req.originalUrl} does not exists.`, 404));

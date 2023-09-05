@@ -9,6 +9,10 @@ import { htmlToText } from "html-to-text";
 import useAuth from "../hooks/useAuth";
 import { useState } from "react";
 import DateModel from "./DateModel";
+import { useParams } from "react-router-dom";
+import { baseURL } from "../api";
+import { toast } from "react-toastify";
+import { loadStripe } from "@stripe/stripe-js";
 
 const PropertyDetail = ({
   title,
@@ -18,6 +22,7 @@ const PropertyDetail = ({
   description,
   city,
 }) => {
+  const { id } = useParams();
   const { user } = useAuth();
   const { palette } = useTheme();
   const [isDateModelOpen, setDateModel] = useState(false);
@@ -27,7 +32,45 @@ const PropertyDetail = ({
   const handleView = () => {
     setDateModel(true);
   };
-  const handleBid = () => {};
+
+  const handleBuy = async (e) => {
+    try {
+      e.preventDefault();
+
+      const stripe = await loadStripe(
+        "pk_test_51Nm9EoSHOGV61bOvYvudVLva41hr7n0bAq2OB1lZBu93gjpyLyK1dCNBTEZrssEJfx3sRpwsiNSKh21GEzmOrrcL00sRBbsbMV"
+      );
+
+      const res = await fetch(
+        `${baseURL}/transactions/checkout-session/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${user.token}`,
+          },
+          method: "POST",
+        }
+      );
+      const session = await res.json();
+
+      if (session.status === "error") {
+        throw Error(session.message);
+      }
+
+      console.log(session);
+
+      const result = stripe.redirectToCheckout({
+        sessionId: session.id,
+        // lineItems: [{ sessionId: session.id }],
+      });
+
+      if (result.error) {
+        console.log(result.error);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   return (
     <Box p={1}>
@@ -98,14 +141,24 @@ const PropertyDetail = ({
         </Button>
         <DateModel open={isDateModelOpen} set={setDateModel} />
 
-        <Button
+        {/* <Button
           variant="outlined"
           color="warning"
           disabled={!user}
           onClick={handleBid}
         >
           Bid On this project
-        </Button>
+        </Button> */}
+        <form onSubmit={handleBuy}>
+          <Button
+            variant="outlined"
+            color="warning"
+            disabled={!user}
+            type="submit"
+          >
+            Buy this property
+          </Button>
+        </form>
       </Box>
 
       {!user && (

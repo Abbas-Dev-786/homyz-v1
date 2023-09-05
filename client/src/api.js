@@ -2,7 +2,7 @@ import axios from "axios";
 
 const DEFAULT_ERROR_MESSAGE = "Network Error or Something went wrong.";
 
-const baseURL = import.meta.env.DEV
+export const baseURL = import.meta.env.DEV
   ? "http://127.0.0.1:8000/api/v1"
   : "https://homyz-amb.up.railway.app/api/v1";
 
