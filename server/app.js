@@ -20,7 +20,11 @@ const app = express();
 app.enable("trust proxy");
 
 // Implement CORS
-const whitelist = ["http://localhost:5173", "https://homyz-amb.netlify.app"];
+const whitelist = [
+  "http://localhost:5173",
+  "https://homyz-amb.netlify.app",
+  "https://dashboard.stripe.com",
+];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1) {
