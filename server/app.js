@@ -23,7 +23,7 @@ app.enable("trust proxy");
 const whitelist = [
   "http://localhost:5173",
   "https://homyz-amb.netlify.app",
-  "https://dashboard.stripe.com",
+  "https://dashboard.stripe.com/",
 ];
 const corsOptions = {
   origin: (origin, callback) => {
