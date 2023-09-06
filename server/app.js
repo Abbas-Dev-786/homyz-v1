@@ -36,6 +36,7 @@ app.enable("trust proxy");
 // };
 // app.use(cors(corsOptions));
 // app.options("*", cors(corsOptions));
+app.use(cors());
 
 // Set security HTTP headers
 app.use(helmet());
