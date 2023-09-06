@@ -12,6 +12,7 @@ const userRouter = require("./routes/userRoute");
 const propertyRouter = require("./routes/propertyRoute");
 const viewRouter = require("./routes/viewRoute");
 const transactionRouter = require("./routes/transactionRoute");
+const transactionController = require("./controllers/transactionController");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
@@ -39,6 +40,12 @@ app.options("*", cors(corsOptions));
 
 // Set security HTTP headers
 app.use(helmet());
+
+express.application.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  transactionController.webhookCheckout
+);
 
 app.use(express.json());
 app.use(morgan("dev"));
