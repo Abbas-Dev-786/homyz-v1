@@ -42,7 +42,7 @@ app.options("*", cors(corsOptions));
 app.use(helmet());
 
 express.application.post(
-  "/webhook-checkout",
+  "/webhook",
   express.raw({ type: "application/json" }),
   transactionController.webhookCheckout
 );
