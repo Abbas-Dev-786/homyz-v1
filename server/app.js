@@ -42,7 +42,7 @@ app.options("*", cors());
 // Set security HTTP headers
 app.use(helmet());
 
-express.application.post(
+app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
   transactionController.webhookCheckout
