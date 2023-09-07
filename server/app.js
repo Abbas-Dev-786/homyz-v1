@@ -11,6 +11,8 @@ const authRouter = require("./routes/authRoute");
 const userRouter = require("./routes/userRoute");
 const propertyRouter = require("./routes/propertyRoute");
 const viewRouter = require("./routes/viewRoute");
+const transactionRouter = require("./routes/transactionRoute");
+const transactionController = require("./controllers/transactionController");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/AppError");
 
@@ -19,21 +21,32 @@ const app = express();
 app.enable("trust proxy");
 
 // Implement CORS
-const whitelist = ["http://localhost:5173", "https://homyz-amb.netlify.app"];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new AppError("Not allowed by CORS"));
-    }
-  },
-};
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+// const whitelist = [
+//   "http://localhost:5173",
+//   "https://homyz-amb.netlify.app",
+//   "https://api.stripe.com",
+// ];
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     console.log(origin);
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new AppError("Not allowed by CORS"));
+//     }
+//   },
+// };
+app.use(cors());
+app.options("*", cors());
 
 // Set security HTTP headers
 app.use(helmet());
+
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  transactionController.webhookCheckout
+);
 
 app.use(express.json());
 app.use(morgan("dev"));
@@ -65,6 +78,7 @@ app.use(`${BASE_URL}/auth`, authRouter);
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/properties`, propertyRouter);
 app.use(`${BASE_URL}/views`, viewRouter);
+app.use(`${BASE_URL}/transactions`, transactionRouter);
 
 app.all("*", (req, _, next) => {
   next(new AppError(`The route ${req.originalUrl} does not exists.`, 404));

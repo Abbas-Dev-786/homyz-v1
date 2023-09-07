@@ -64,6 +64,10 @@ const propertySchema = new mongoose.Schema(
       max: [15, "Number of Bedrooms chould not be greater than 15"],
       required: [true, "Property must have a price."],
     },
+    isBooked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

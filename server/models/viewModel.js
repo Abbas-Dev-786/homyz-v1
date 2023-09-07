@@ -22,9 +22,6 @@ const viewSchema = new mongoose.Schema(
     endTime: {
       type: Date,
     },
-    day: {
-      type: Date,
-    },
   },
   {
     timestamps: true,
