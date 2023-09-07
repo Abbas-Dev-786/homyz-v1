@@ -21,23 +21,23 @@ const app = express();
 app.enable("trust proxy");
 
 // Implement CORS
-const whitelist = [
-  "http://localhost:5173",
-  "https://homyz-amb.netlify.app",
-  "https://api.stripe.com",
-];
-const corsOptions = {
-  origin: (origin, callback) => {
-    console.log(origin);
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new AppError("Not allowed by CORS"));
-    }
-  },
-};
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+// const whitelist = [
+//   "http://localhost:5173",
+//   "https://homyz-amb.netlify.app",
+//   "https://api.stripe.com",
+// ];
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     console.log(origin);
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new AppError("Not allowed by CORS"));
+//     }
+//   },
+// };
+app.use(cors());
+app.options("*", cors());
 
 // Set security HTTP headers
 app.use(helmet());
